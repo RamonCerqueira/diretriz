@@ -12,7 +12,7 @@ generator client {
 datasource db {
   provider          = "postgresql"
   url               = env("DATABASE_URL")
-  connection_limit  = 10 // controla conexões simultâneas
+
 }
 
 // ===========================================================

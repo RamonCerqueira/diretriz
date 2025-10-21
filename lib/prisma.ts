@@ -1,7 +1,3 @@
-// ===========================================================
-// 📦 PRISMA CLIENT - FINAL PARA NEXT.JS + VERCEL
-// ===========================================================
-
 import { PrismaClient } from '@prisma/client';
 
 // Evita múltiplas instâncias no Next.js (Hot Reload / Dev)
@@ -10,10 +6,12 @@ const globalForPrisma = global as unknown as { prisma?: PrismaClient };
 export const prisma =
   globalForPrisma.prisma ||
   new PrismaClient({
-    // Logs diferentes para produção e desenvolvimento
     log:
       process.env.NODE_ENV === 'production'
-        ? ['error', 'warn'] // Apenas erros e avisos em produção
+        ? [
+            { emit: 'stdout', level: 'error' },
+            { emit: 'stdout', level: 'warn' },
+          ]
         : [
             { emit: 'event', level: 'query' },
             { emit: 'stdout', level: 'error' },
@@ -35,6 +33,7 @@ if (process.env.DEBUG_PRISMA === 'true' && process.env.NODE_ENV !== 'production'
 if (!globalForPrisma.prisma) {
   globalForPrisma.prisma = prisma;
 }
+
 
 // import { PrismaClient } from '@prisma/client';
 
