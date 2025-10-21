@@ -1,0 +1,178 @@
+// ===========================================================
+// PRISMA SCHEMA OTIMIZADO
+// ===========================================================
+// 👉 Inclui índices compostos, boas práticas e compatibilidade
+//    com PostgreSQL e produção (Vercel, Render, etc).
+// ===========================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  connection_limit  = 10 // controla conexões simultâneas
+}
+
+// ===========================================================
+// 🔐 Modelo de Usuário (autenticação do painel admin)
+// ===========================================================
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ===========================================================
+// 🏢 Informações da Empresa
+// ===========================================================
+model CompanyInfo {
+  id          String   @id @default(cuid())
+  cnpj        String   @unique
+  name        String
+  address     String
+  city        String
+  state       String
+  foundedYear Int
+  phone       String?
+  email       String?
+  description String?  @db.Text
+  mission     String?  @db.Text
+  vision      String?  @db.Text
+  values      String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ===========================================================
+// 🧩 Seções customizáveis da landing page
+// ===========================================================
+model Section {
+  id        String   @id @default(cuid())
+  title     String
+  subtitle  String?
+  content   String?  @db.Text
+  imageUrl  String?
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  type      String   // hero, about, services, contact, custom
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, order])
+}
+
+// ===========================================================
+// 💼 Serviços oferecidos
+// ===========================================================
+model Service {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @db.Text
+  icon        String?
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isActive, order])
+}
+
+// ===========================================================
+// 🎞️ Álbuns de projetos / portfólio
+// ===========================================================
+model Album {
+  id          String    @id @default(cuid())
+  title       String
+  description String?   @db.Text
+  coverImage  String?
+  client      String?
+  location    String?
+  year        Int?
+  category    String?
+  order       Int       @default(0)
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  photos      Photo[]
+
+  @@index([isActive, order])
+  @@index([category])
+}
+
+// ===========================================================
+// 🖼️ Fotos dentro dos álbuns
+// ===========================================================
+model Photo {
+  id          String   @id @default(cuid())
+  albumId     String
+  album       Album    @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  imageUrl    String
+  title       String?
+  description String?  @db.Text
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([albumId, order])
+}
+
+// ===========================================================
+// 💬 Depoimentos de clientes
+// ===========================================================
+model Testimonial {
+  id         String   @id @default(cuid())
+  clientName String
+  company    String?
+  content    String   @db.Text
+  rating     Int?     @default(5)
+  imageUrl   String?
+  order      Int      @default(0)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([isActive, order])
+}
+
+// ===========================================================
+// 👥 Membros da equipe
+// ===========================================================
+model TeamMember {
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  bio       String?  @db.Text
+  imageUrl  String?
+  email     String?
+  phone     String?
+  linkedIn  String?
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, order])
+}
+
+// ===========================================================
+// 📩 Contatos e leads recebidos via site
+// ===========================================================
+model Contact {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String?
+  message   String   @db.Text
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isRead])
+  @@index([createdAt])
+}
