@@ -1,7 +1,3 @@
-// ===========================================================
-// 📦 PRISMA CLIENT - FINAL E SEM ERROS DE TYPE
-// ===========================================================
-
 import { PrismaClient, Prisma } from '@prisma/client';
 
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
@@ -11,12 +7,12 @@ export const prisma =
   new PrismaClient({
     log:
       process.env.NODE_ENV === 'production'
-        ? (['error', 'warn'] as Prisma.LogLevel[])
-        : ([
+        ? ['error', 'warn'] // ✅ strings literais suficientes
+        : [
             { emit: 'event', level: 'query' },
             { emit: 'stdout', level: 'error' },
             { emit: 'stdout', level: 'warn' },
-          ] as Prisma.LogDefinition[]),
+          ], // ✅ já tipado como Prisma.LogDefinition[]
   });
 
 // 🎯 Log detalhado apenas no modo desenvolvimento
@@ -27,9 +23,10 @@ if (process.env.DEBUG_PRISMA === 'true') {
     console.log('Params:', e.params);
     console.log('Duration:', e.duration, 'ms\n');
   });
-
-  globalForPrisma.prisma = prisma;
 }
+
+// Evitar múltiplas instâncias no Next.js
+globalForPrisma.prisma = prisma;
 
 // import { PrismaClient } from '@prisma/client';
 
