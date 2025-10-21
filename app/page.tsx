@@ -182,10 +182,12 @@ export default async function Home() {
 
   const companyInfo = normalizeCompanyInfo(companyInfoRaw);
 
-  const aboutDataRaw = sectionsRaw.find((s) => s.type === 'about');
+  const aboutDataRaw = sectionsRaw.find((s: { type: string }) => s.type === 'about');
+
+
   const aboutData = aboutDataRaw ? normalizeSection(aboutDataRaw) : null;
 
-  const servicesDataRaw = sectionsRaw.find((s) => s.type === 'services');
+  const servicesDataRaw = sectionsRaw.find((s: { type: string }) => s.type === 'services');
   const servicesData = servicesDataRaw ? normalizeSection(servicesDataRaw) : null;
 
   const services = servicesRaw.map(normalizeService);
