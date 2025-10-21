@@ -7,6 +7,72 @@ import ProjectsSection from '@/components/sections/ProjectsSection';
 import TestimonialsSection from '@/components/sections/TestimonialsSection';
 import ContactSection from '@/components/sections/ContactSection';
 import Footer from '@/components/Footer';
+export interface Section {
+  id: string;
+  type: string;
+  title: string | null;
+  subtitle?: string | null;
+  content?: string | null;
+  imageUrl?: string | null;
+  isActive: boolean;
+  order: number;
+}
+
+export interface Service {
+  id: string;
+  title: string | null;
+  description?: string | null;
+  icon?: string | null;
+  isActive: boolean;
+  order: number;
+}
+
+export interface Photo {
+  id: string;
+  title?: string | null;
+  description?: string | null;
+  imageUrl?: string | null;
+  order: number;
+}
+
+export interface Album {
+  id: string;
+  title: string | null;
+  description?: string | null;
+  coverImage?: string | null;
+  client?: string | null;
+  location?: string | null;
+  category?: string | null;
+  order: number;
+  isActive: boolean;
+  photos: Photo[];
+  _count: { photos: number };
+}
+
+export interface Testimonial {
+  id: string;
+  clientName?: string | null;
+  company?: string | null;
+  content?: string | null;
+  imageUrl?: string | null;
+  rating?: number;
+  isActive: boolean;
+  order: number;
+}
+
+export interface CompanyInfo {
+  name?: string | null;
+  description?: string | null;
+  mission?: string | null;
+  vision?: string | null;
+  values?: string | null;
+  foundedYear?: number;
+  phone?: string | null;
+  email?: string | null;
+  address?: string | null;
+  city?: string | null;
+  state?: string | null;
+}
 
 // Helper genérico para normalizar string | null em string
 function normalizeString(value: string | null | undefined) {

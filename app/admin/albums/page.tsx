@@ -25,6 +25,7 @@ export interface AlbumWithCount {
   };
 }
 
+
 export default function AlbumsPage() {
   const [albums, setAlbums] = useState<AlbumWithCount[]>([]);
   const [isLoading, setIsLoading] = useState(true);
