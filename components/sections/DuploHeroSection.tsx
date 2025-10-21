@@ -22,8 +22,8 @@ export default function HeroSection() {
       <div 
         className="absolute inset-0 z-0"
         style={{
-          backgroundImage: 'url(/images/549197093_18420321886109522_1589379916551028456_n.jpg)',
-          backgroundSize: 'cover',
+          backgroundImage: 'url(/images/hero2.jpg)',
+          backgroundSize: 'contain',
           backgroundPosition: 'center',
           opacity: openProgress * 0.9,
         }}

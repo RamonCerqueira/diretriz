@@ -55,7 +55,7 @@ export default function ProjectsSection({ albums }: ProjectsSectionProps) {
             >
               <div className="absolute inset-0">
                 <img
-                  src={album.coverImage || album.photos[0]?.imageUrl || '/images/default.jpg'}
+                  src={album.coverImage || album.photos[0]?.imageUrl || '/images/529839027_18415143589109522_295138322488468916_n.jpg'}
                   alt={album.title}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
