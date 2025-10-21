@@ -1,23 +1,29 @@
-import { PrismaClient, Prisma } from '@prisma/client';
+// ===========================================================
+// 📦 PRISMA CLIENT - FINAL PARA NEXT.JS + VERCEL
+// ===========================================================
 
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
+import { PrismaClient } from '@prisma/client';
+
+// Evita múltiplas instâncias no Next.js (Hot Reload / Dev)
+const globalForPrisma = global as unknown as { prisma?: PrismaClient };
 
 export const prisma =
   globalForPrisma.prisma ||
   new PrismaClient({
+    // Logs diferentes para produção e desenvolvimento
     log:
       process.env.NODE_ENV === 'production'
-        ? ['error', 'warn'] // ✅ strings literais suficientes
+        ? ['error', 'warn'] // Apenas erros e avisos em produção
         : [
             { emit: 'event', level: 'query' },
             { emit: 'stdout', level: 'error' },
             { emit: 'stdout', level: 'warn' },
-          ], // ✅ já tipado como Prisma.LogDefinition[]
+          ],
   });
 
-// 🎯 Log detalhado apenas no modo desenvolvimento
-if (process.env.DEBUG_PRISMA === 'true') {
-  (prisma as any).$on('query', (e: Prisma.QueryEvent) => {
+// 🎯 Log detalhado de queries apenas no modo DEBUG
+if (process.env.DEBUG_PRISMA === 'true' && process.env.NODE_ENV !== 'production') {
+  prisma.$on('query', (e: any) => {
     console.log('\x1b[36m%s\x1b[0m', '🔍 PRISMA QUERY');
     console.log('SQL:', e.query);
     console.log('Params:', e.params);
@@ -25,8 +31,10 @@ if (process.env.DEBUG_PRISMA === 'true') {
   });
 }
 
-// Evitar múltiplas instâncias no Next.js
-globalForPrisma.prisma = prisma;
+// Salva no global para evitar múltiplas instâncias no dev
+if (!globalForPrisma.prisma) {
+  globalForPrisma.prisma = prisma;
+}
 
 // import { PrismaClient } from '@prisma/client';
 
