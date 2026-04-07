@@ -8,6 +8,8 @@ import TestimonialsSection from '@/components/sections/TestimonialsSection';
 import ContactSection from '@/components/sections/ContactSection';
 import Footer from '@/components/Footer';
 
+export const dynamic = 'force-dynamic';
+
 // =========================
 // Tipos frontend-safe
 // =========================
@@ -162,23 +164,33 @@ function normalizeTestimonial(testimonial: any): Testimonial {
 // Página
 // =========================
 export default async function Home() {
-  const [sectionsRaw, servicesRaw, albumsRaw, testimonialsRaw, companyInfoRaw] =
-    await Promise.all([
-      prisma.section.findMany({ where: { isActive: true }, orderBy: { order: 'asc' } }),
-      prisma.service.findMany({ where: { isActive: true }, orderBy: { order: 'asc' } }),
-      prisma.album.findMany({
-        where: { isActive: true },
-        include: { photos: { orderBy: { order: 'asc' } }, _count: { select: { photos: true } } },
-        orderBy: { order: 'asc' },
-        take: 6,
-      }),
-      prisma.testimonial.findMany({
-        where: { isActive: true },
-        orderBy: { order: 'asc' },
-        take: 3,
-      }),
-      prisma.companyInfo.findFirst(),
-    ]);
+  let sectionsRaw: any[] = [];
+  let servicesRaw: any[] = [];
+  let albumsRaw: any[] = [];
+  let testimonialsRaw: any[] = [];
+  let companyInfoRaw: any = null;
+
+  try {
+    [sectionsRaw, servicesRaw, albumsRaw, testimonialsRaw, companyInfoRaw] =
+      await Promise.all([
+        prisma.section.findMany({ where: { isActive: true }, orderBy: { order: 'asc' } }),
+        prisma.service.findMany({ where: { isActive: true }, orderBy: { order: 'asc' } }),
+        prisma.album.findMany({
+          where: { isActive: true },
+          include: { photos: { orderBy: { order: 'asc' } }, _count: { select: { photos: true } } },
+          orderBy: { order: 'asc' },
+          take: 6,
+        }),
+        prisma.testimonial.findMany({
+          where: { isActive: true },
+          orderBy: { order: 'asc' },
+          take: 3,
+        }),
+        prisma.companyInfo.findFirst(),
+      ]);
+  } catch (error) {
+    console.error('Erro ao carregar dados da home:', error);
+  }
 
   const companyInfo = normalizeCompanyInfo(companyInfoRaw);
 
