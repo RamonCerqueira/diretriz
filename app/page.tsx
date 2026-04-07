@@ -8,6 +8,8 @@ import TestimonialsSection from '@/components/sections/TestimonialsSection';
 import ContactSection from '@/components/sections/ContactSection';
 import Footer from '@/components/Footer';
 
+export const dynamic = 'force-dynamic';
+
 // =========================
 // Tipos frontend-safe
 // =========================
