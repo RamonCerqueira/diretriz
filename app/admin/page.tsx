@@ -13,21 +13,34 @@ export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboard() {
   // Buscar estatísticas
-  const [
-    sectionsCount,
-    servicesCount,
-    albumsCount,
-    photosCount,
-    contactsCount,
-    unreadContactsCount,
-  ] = await Promise.all([
-    prisma.section.count(),
-    prisma.service.count(),
-    prisma.album.count(),
-    prisma.photo.count(),
-    prisma.contact.count(),
-    prisma.contact.count({ where: { isRead: false } }),
-  ]);
+  let sectionsCount = 0;
+  let servicesCount = 0;
+  let albumsCount = 0;
+  let photosCount = 0;
+  let contactsCount = 0;
+  let unreadContactsCount = 0;
+  let dbError = false;
+
+  try {
+    [
+      sectionsCount,
+      servicesCount,
+      albumsCount,
+      photosCount,
+      contactsCount,
+      unreadContactsCount,
+    ] = await Promise.all([
+      prisma.section.count(),
+      prisma.service.count(),
+      prisma.album.count(),
+      prisma.photo.count(),
+      prisma.contact.count(),
+      prisma.contact.count({ where: { isRead: false } }),
+    ]);
+  } catch (error) {
+    dbError = true;
+    console.error('Erro ao carregar dados do dashboard admin:', error);
+  }
 
   const stats = [
     {
@@ -97,6 +110,13 @@ export default async function AdminDashboard() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {dbError && (
+          <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-800">
+            Não foi possível conectar ao banco de dados. Configure a variável
+            <strong> DATABASE_URL </strong> no ambiente da Vercel para carregar os dados reais.
+          </div>
+        )}
+
         {/* Stats Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {stats.map((stat) => {
